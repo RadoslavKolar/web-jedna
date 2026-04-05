@@ -1,0 +1,22 @@
+name: Automaticky Deploy na Pegatron
+
+on:
+  push:
+    branches: [ main ] # Spustí se to při každém 'git push'
+
+jobs:
+  deploy-job:
+    runs-on: [self-hosted, pegatron] # Tady GitHub hledá tvůj stroj
+    
+    steps:
+      - name: Stahnout novy kod z GitHubu
+        uses: actions/checkout@v4
+
+      - name: Nasadit zmenu do Dockeru
+        run: |
+          # 1. Zkopírujeme soubory z pracovní složky GitHubu do tvé složky ~/jedna
+          cp -r * ~/jedna/
+          
+          # 2. Vlezeme do složky a řekneme Dockeru, aby se zaktualizoval
+          cd ~/jedna
+          docker compose up -d --build
